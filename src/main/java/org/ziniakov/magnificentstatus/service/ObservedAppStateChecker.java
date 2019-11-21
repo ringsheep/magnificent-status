@@ -15,6 +15,7 @@ public class ObservedAppStateChecker {
 
     private final RestTemplate restTemplate;
     private final ObservedAppProperties appProperties;
+    private final ObservedAppLogger logger;
 
     @Getter
     private volatile ObservedAppState state = ObservedAppState.HEALTHY;
@@ -24,26 +25,26 @@ public class ObservedAppStateChecker {
      * writes to log only if state changes from previous
      */
     @Scheduled(fixedDelayString = "${observed-app.healthCheckDelay}")
-    public void checkStatus() {
+    public void checkState() {
         var previousStatus = state;
-        state = getAppAvailabilityStatus();
+        state = fetchState();
         if (previousStatus != state) {
-            System.out.println(appProperties.getName() + " has changed it's availability state to: " + state);
+            logger.log(appProperties.getName() + " has changed it's health state to: " + state);
         }
     }
 
     /**
-     * watches http response code of observed url. if there is no valid http code - writes error log
+     * fetches http response code of observed url. if there is no valid http code - writes error log
      * @return state of observed app
      */
-    public ObservedAppState getAppAvailabilityStatus() {
+    private ObservedAppState fetchState() {
         try {
             var response = restTemplate.getForEntity(appProperties.getUrl(), String.class);
             return response.getStatusCode().is2xxSuccessful() ? ObservedAppState.HEALTHY : ObservedAppState.UNHEALTHY;
         } catch(HttpServerErrorException e) {
             return e.getStatusCode().isError() ? ObservedAppState.UNHEALTHY : ObservedAppState.UNAVAILABLE;
         } catch (Exception e) {
-            System.out.println("Exception during health checking: " + e.toString());
+            logger.log("Exception during health checking: " + e.toString());
             return ObservedAppState.UNAVAILABLE;
         }
     }

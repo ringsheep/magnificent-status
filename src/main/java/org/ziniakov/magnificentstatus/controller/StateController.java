@@ -12,10 +12,10 @@ public class StateController {
     private final ObservedAppStateChecker checker;
 
     /**
-     * @return current state of observed app (healty/unhealthy/unavaialbe)
+     * @return current state of observed app (healthy/unhealthy/unavailable)
      */
     @GetMapping(path = "/state")
     public String getState() {
-        return checker.getAppAvailabilityStatus().toString();
+        return checker.getState().toString();
     }
 }
