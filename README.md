@@ -29,6 +29,7 @@ curl -X GET http://localhost:8080/state'
 
 ## Requirements
 * JDK 11
+* Python 2/3 to launch external api
 
 ## TODO
 * Dockerize app
