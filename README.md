@@ -15,7 +15,7 @@ to launch an external api which can change it's state:
 pip install twisted
 python server.py
 ```
-http://localhost:12345/ is being watched by default
+http://localhost:12345/ is being watched by default every 3 seconds
 
 ## API
 * Get current state
