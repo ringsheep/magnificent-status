@@ -24,6 +24,7 @@ public class ObservedAppStateChecker {
      * checks health of observed app every healthCheckDelay milliseconds
      * writes to log only if state changes from previous
      */
+    // TODO: find a way to move delay value to ConfigurationProperties
     @Scheduled(fixedDelayString = "${observed-app.healthCheckDelay}")
     public void checkState() {
         var previousStatus = state;
