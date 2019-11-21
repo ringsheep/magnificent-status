@@ -31,12 +31,21 @@ class ObservedAppStateCheckerTest {
     }
 
     @Test
-    void checkState_should_log_on_new_state() {
+    void should_log_on_new_state() {
         throwsHttpException();
 
         checker.checkState();
 
         verify(logger).log("testService has changed it's health state to: UNHEALTHY");
+    }
+
+    @Test
+    void should_log_on_invalid_exception() {
+        throwsInvalidException();
+
+        checker.checkState();
+
+        verify(logger).log("Exception during health checking: java.lang.RuntimeException: something gone wrong :(");
     }
 
     @Test
@@ -68,15 +77,6 @@ class ObservedAppStateCheckerTest {
         var state = checker.getState();
 
         assertEquals(ObservedAppState.UNAVAILABLE, state);
-    }
-
-    @Test
-    void getState_should_log_on_any_other_exception() {
-        throwsInvalidException();
-
-        checker.checkState();
-
-        verify(logger).log("Exception during health checking: java.lang.RuntimeException: something gone wrong :(");
     }
 
     private void throwsHttpException() {
